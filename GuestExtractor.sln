@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuestExtractor", "GuestExtractor.csproj", "{EA618A12-B24B-4669-B16F-0F780F13A035}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EA618A12-B24B-4669-B16F-0F780F13A035}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{EA618A12-B24B-4669-B16F-0F780F13A035}.Debug|Any CPU.Build.0 = Debug|x64
+		{EA618A12-B24B-4669-B16F-0F780F13A035}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA618A12-B24B-4669-B16F-0F780F13A035}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D9DEE4CF-7FEA-4E29-9E83-6782B5596BC8}
+	EndGlobalSection
+EndGlobal
