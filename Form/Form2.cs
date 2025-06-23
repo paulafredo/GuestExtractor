@@ -44,13 +44,11 @@ namespace GuestExtractor
         public static extern uint SetWindowDisplayAffinity(IntPtr hwnd, uint dwAffinity);
 
         private string[] scanPatterns = new string[] {
-            "40 cd cc 8c 3f 8f c2 f5 3c cd cc CC 3D 07 00 00 00 00 00 00 00 00 00 00 00 00 00 f0 41 00 00 48 42 00 00 00 3f 33 33 13 40 00 00 b0 3f 00 00 80 3F 01 00 00",
-        "10 4C 2D E9 08 B0 8D E2 0C 01 9F E5 00 00 8F E0 00 00 D0 E5 00 00 50 E3 06 00 00 1A FC 00 9F E5"};
+            "10 4C 2D E9 08 B0 8D E2 0C 01 9F E5 00 00 8F E0" ,"01 41"};
 
 
 
-        private string[] replacePatterns = new string[] { "40 cd cc 8C 3F 8f c2 F5 3C cd cc CC 3D 07 00 00 00 00 00 ff ff 00 00 00 00 00 00 f0 41 00 00 48 42 00 00 00 3f 33 33 13 40 00 00 b0 3f 00 00 80 3f 01 00 00",
-        "01 00 A0 E3 1E FF 2F E1 0C 01 9F E5 00 00 8F E0 00 00 D0 E5 00 00 50 E3 06 00 00 1A FC 00 9F E5"};
+        private string[] replacePatterns = new string[] { "01 00 A0 E3 1E FF 2F E1 0C 01 9F E5 00 00 8F E0", "01 45"};
 
         private async Task EnableFunction(string scanPattern, string replacePattern, string nameFonction)
         {
@@ -107,23 +105,18 @@ namespace GuestExtractor
             }
         }
 
-        // Bouton de sécurisation (ex.: Anticheat Bypass)
-        private void securiteButton_Click(object sender, EventArgs e)
-        {
-            _ = EnableFunction(replacePatterns[0], scanPatterns[0], "Anticheat Bypass");
-        }
 
         // Bouton de réinitialisation des guest (Guest Reset)
         // Ici, nous distinguons deux opérations si deux ensembles de patterns sont définis.
         private void btnResetGuest_Click(object sender, EventArgs e)
         {
             // Vérifie que les arrays contiennent au moins deux éléments pour éviter les erreurs
-            if (scanPatterns.Length >= 2 && replacePatterns.Length >= 2)
+            if (scanPatterns.Length >= 1 && replacePatterns.Length >= 1)
             {
                 // Première étape de reset
                 _ = EnableFunction(scanPatterns[0], replacePatterns[0], "Guest Reset (Step 1)");
                 // Seconde étape de reset
-                _ = EnableFunction(scanPatterns[1], replacePatterns[1], "Guest Reset (Step 2)");
+                //_ = EnableFunction(scanPatterns[1], replacePatterns[1], "Guest Reset (Step 2)");
             }
             else
             {
