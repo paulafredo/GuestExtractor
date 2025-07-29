@@ -7,12 +7,14 @@ using System.Windows.Forms;
 using Aimguard;
 using Newtonsoft.Json;
 using System.Runtime.InteropServices;
-using static CuoreUI.DeviceInfo;
+
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Linq;
 using System.Threading;
 using System.Drawing;
+using System.Net;
+using System.Net.Http;
 
 namespace GuestExtractor
 {
@@ -23,7 +25,11 @@ namespace GuestExtractor
         private nexx32 nexx = new nexx32();
 
         // ADB related fields
-        private string adbPath = "";
+        //private string adbPath = "";
+
+        private string adbPath;
+        private string adbFolder = Path.Combine(Path.GetTempPath(), "ADB");
+
         private bool isAdbMonitoring = false;
         private CancellationTokenSource monitoringCancellationToken;
         private readonly string deviceGuestPath = "/storage/emulated/0/com.garena.msdk/guest100067.dat";
@@ -42,7 +48,7 @@ namespace GuestExtractor
 
         }
 
-        private void Form2_Load(object sender, EventArgs e)
+        private async void Form2_Load(object sender, EventArgs e)
         {
             UpdateStatus("Welcome to GuestExtractor.");
 
@@ -52,15 +58,18 @@ namespace GuestExtractor
             txtOutputDir.Enter += txtOutputDir_Enter;
             txtOutputDir.Leave += txtOutputDir_Leave;
 
+            //await DownloadAdbFiles();
+            await TestAdbConnection();
+
             EnableWindowDragging();
         }
 
         private void EnableWindowDragging()
         {
-            // Enable dragging from the header panel
-            panelHeader.MouseDown += PanelHeader_MouseDown;
-            panelHeader.MouseMove += PanelHeader_MouseMove;
-            panelHeader.MouseUp += PanelHeader_MouseUp;
+            //Enable dragging from the header panel
+            //panelHeader.MouseDown += PanelHeader_MouseDown;
+            //panelHeader.MouseMove += PanelHeader_MouseMove;
+            //panelHeader.MouseUp += PanelHeader_MouseUp;
 
             // Enable dragging from the title label
             label1.MouseDown += PanelHeader_MouseDown;
@@ -68,9 +77,9 @@ namespace GuestExtractor
             label1.MouseUp += PanelHeader_MouseUp;
 
             // Enable dragging from the version label
-            labelVersion.MouseDown += PanelHeader_MouseDown;
-            labelVersion.MouseMove += PanelHeader_MouseMove;
-            labelVersion.MouseUp += PanelHeader_MouseUp;
+            //labelVersion.MouseDown += PanelHeader_MouseDown;
+            //labelVersion.MouseMove += PanelHeader_MouseMove;
+            //labelVersion.MouseUp += PanelHeader_MouseUp;
 
             // Enable dragging from the top container control
             guna2ContainerControl1.MouseDown += PanelHeader_MouseDown;
@@ -160,32 +169,53 @@ namespace GuestExtractor
                 return;
             }
 
+            int maxRetries = 5; // Nombre de tentatives maximum
+            int currentTry = 0;
+
             try
             {
                 await Task.Run(async () =>
                 {
-                    UpdateStatus($"{nameFonction}: {(activate ? "Activating" : "Deactivating")}...");
-
-                    IEnumerable<long> result = await nexx.Trace(activate ? scanPattern : replacePattern);
-
-                    if (result == null || !result.Any())
+                    while (currentTry < maxRetries)
                     {
-                        UpdateStatus($"{nameFonction}: Guest Reset Sucessful !!!");
-                        return;
-                    }
+                        currentTry++;
+                        UpdateStatus($"{nameFonction}: Tentative {currentTry}/{maxRetries}...");
 
-                    foreach (long id in result)
-                    {
-                        bool setSuccess = nexx.SetBytes(id, activate ? replacePattern : scanPattern);
-                        if (!setSuccess)
+                        IEnumerable<long> result = await nexx.Trace(activate ? scanPattern : replacePattern);
+
+                        
+                        if (result == null || !result.Any())
                         {
-                            MessageBox.Show($"Failed to update memory at ID: {id}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            UpdateStatus($"{nameFonction}: Memory update failed at ID {id}.");
+                            UpdateStatus($"{nameFonction}: Guest Reset Successful !!!");
                             return;
+                        }
+
+                        
+                        bool allSuccess = true;
+                        foreach (long id in result)
+                        {
+                            bool setSuccess = nexx.SetBytes(id, activate ? replacePattern : scanPattern);
+                            if (!setSuccess)
+                            {
+                                allSuccess = false;
+                                UpdateStatus($"{nameFonction}: Memory update failed at ID {id}. Tentative {currentTry}.");
+                                break;
+                            }
+                        }
+
+                       
+                        if (allSuccess)
+                        {
+                            UpdateStatus($"{nameFonction}: Tentative {currentTry} terminée, vérification...");
+                            await Task.Delay(200);
+                        }
+                        else
+                        {
+                            await Task.Delay(300);
                         }
                     }
 
-                    UpdateStatus($"{nameFonction}: {(activate ? "Try Again reset failed !!!" : "Deactivated")}");
+                    UpdateStatus($"{nameFonction}: Échec après {maxRetries} tentatives.");
                 });
             }
             catch (Exception ex)
@@ -195,12 +225,13 @@ namespace GuestExtractor
             }
         }
 
+
         // Guest Reset button
-        private void btnResetGuest_Click(object sender, EventArgs e)
+        private void btnResetGuest_Click_1(object sender, EventArgs e)
         {
             if (scanPatterns.Length >= 1 && replacePatterns.Length >= 1)
             {
-                _ = EnableFunction(scanPatterns[0], replacePatterns[0], "Guest Reset (Step 1)");
+                _ = EnableFunction(scanPatterns[0], replacePatterns[0], "Guest Reset");
             }
             else
             {
@@ -208,8 +239,9 @@ namespace GuestExtractor
             }
         }
 
-        // Button to select ADB location
-        private void btnSelectAdb_Click(object sender, EventArgs e)
+
+
+        private void btnSelectAdb_Click_1(object sender, EventArgs e)
         {
             OpenFileDialog ofd = new OpenFileDialog();
             ofd.Filter = "ADB Executable|adb.exe|All Files|*.*";
@@ -225,6 +257,7 @@ namespace GuestExtractor
                 _ = TestAdbConnection();
             }
         }
+
 
         // Test ADB connection
         private async Task TestAdbConnection()
@@ -246,19 +279,19 @@ namespace GuestExtractor
 
                     if (lines.Any())
                     {
-                        UpdateStatus("✅ ADB device connected and ready.");
+                        UpdateStatus("ADB device connected and ready.");
                         btnStartMonitoring.Enabled = true;
                     }
                     else
                     {
-                        UpdateStatus("❌ No ADB devices found. Restarting ADB server...");
+                        UpdateStatus("No ADB devices found. Restarting ADB server...");
 
                         // Restart the ADB server
                         await RunAdbCommand("kill-server");
                         await Task.Delay(1000); // slight delay to ensure kill completes
                         await RunAdbCommand("start-server");
 
-                        UpdateStatus("🔄 ADB server restarted. Please reconnect or re-authorize your device.");
+                        UpdateStatus("ADB server restarted. Please reconnect or re-authorize your device.");
                         btnStartMonitoring.Enabled = false;
                     }
                 }
@@ -277,8 +310,12 @@ namespace GuestExtractor
 
 
         // Start/Stop ADB monitoring
-        private async void btnStartMonitoring_Click(object sender, EventArgs e)
+
+
+
+        private async void btnStartMonitoring_Click_1(object sender, EventArgs e)
         {
+           
             if (!isAdbMonitoring)
             {
                 // Get actual output directory (ignore placeholder text)
@@ -291,17 +328,17 @@ namespace GuestExtractor
                 // Validate output directory if specified
                 if (!string.IsNullOrWhiteSpace(outputDir) && !Directory.Exists(outputDir))
                 {
-                    UpdateStatus("❌ Output directory doesn't exist. Please select a valid directory or leave empty to use current directory.");
+                    UpdateStatus("Output directory doesn't exist. Please select a valid directory or leave empty to use current directory.");
                     return;
                 }
 
                 // Start monitoring
                 monitoringCancellationToken = new CancellationTokenSource();
                 isAdbMonitoring = true;
-                btnStartMonitoring.Text = "Stop Monitoring";
+                btnStartMonitoring.Text = "STOP MONITORING";
                 btnStartMonitoring.BackColor = System.Drawing.Color.Red;
 
-                UpdateStatus("🔍 Started ADB monitoring for guest files...");
+                UpdateStatus("Started ADB monitoring for guest files...");
                 await StartAdbMonitoring(monitoringCancellationToken.Token);
             }
             else
@@ -310,6 +347,7 @@ namespace GuestExtractor
                 StopAdbMonitoring();
             }
         }
+        
 
         private void StopAdbMonitoring()
         {
@@ -319,9 +357,9 @@ namespace GuestExtractor
             }
 
             isAdbMonitoring = false;
-            btnStartMonitoring.Text = "Start ADB Monitoring";
+            btnStartMonitoring.Text = "START ADB  MONITORING ";
             btnStartMonitoring.BackColor = System.Drawing.Color.LightGreen;
-            UpdateStatus("⏹️ ADB monitoring stopped.");
+            UpdateStatus("ADB monitoring stopped.");
         }
 
         // Main ADB monitoring loop
@@ -335,7 +373,7 @@ namespace GuestExtractor
             }
 
             string outputFile = Path.Combine(outputDir, "guest_accounts.json");
-            UpdateStatus($"💾 Output file: {outputFile}");
+            UpdateStatus($"Output file: {outputFile}");
 
             while (!cancellationToken.IsCancellationRequested)
             {
@@ -346,18 +384,18 @@ namespace GuestExtractor
 
                     if (checkResult.success && checkResult.output.Contains("exists"))
                     {
-                        UpdateStatus("📱 Guest file detected on device, processing...");
+                        UpdateStatus("Guest file detected on device, processing...");
 
                         // Process the file
                         bool processSuccess = await ProcessGuestFileFromDevice(outputFile);
 
                         if (processSuccess)
                         {
-                            UpdateStatus("✅ Guest file processed successfully!");
+                            UpdateStatus("Guest file processed successfully!");
                         }
                         else
                         {
-                            UpdateStatus("❌ Failed to process guest file.");
+                            UpdateStatus("Failed to process guest file.");
                         }
                     }
 
@@ -376,12 +414,12 @@ namespace GuestExtractor
             }
         }
 
-        // Process guest file from device
+        
         private async Task<bool> ProcessGuestFileFromDevice(string outputFile)
         {
             try
             {
-                // Step 1: Copy file from device
+                
                 var pullResult = await RunAdbCommand($"pull {deviceGuestPath} {tempGuestFile}");
                 if (!pullResult.success)
                 {
@@ -389,7 +427,7 @@ namespace GuestExtractor
                     return false;
                 }
 
-                // Step 2: Parse the file
+                
                 if (!File.Exists(tempGuestFile))
                 {
                     UpdateStatus("Temp file not found after ADB pull.");
@@ -404,7 +442,7 @@ namespace GuestExtractor
                     return false;
                 }
 
-                // Step 3: Update JSON file
+                
                 bool updateSuccess = await UpdateGuestAccountsJson(outputFile, guestInfo);
                 if (!updateSuccess)
                 {
@@ -412,7 +450,7 @@ namespace GuestExtractor
                     return false;
                 }
 
-                // Step 4: Delete file from device
+                
                 var deleteResult = await RunAdbCommand($"shell \"rm {deviceGuestPath}\"");
                 if (!deleteResult.success)
                 {
@@ -420,10 +458,10 @@ namespace GuestExtractor
                 }
                 else
                 {
-                    UpdateStatus("🗑️ Guest file deleted from device.");
+                    UpdateStatus("Guest file deleted from device.");
                 }
 
-                // Step 5: Cleanup temp file
+                
                 CleanupTempFile();
 
                 return true;
@@ -488,20 +526,22 @@ namespace GuestExtractor
                     {
                         // Update existing account
                         existingAccount.password = newAccount.password;
-                        UpdateStatus($"🔄 Updated existing account: UID {newAccount.uid}");
+                        UpdateStatus($"Updated existing account: UID {newAccount.uid}");
                     }
                     else
                     {
                         // Add new account
                         accounts.Add(newAccount);
-                        UpdateStatus($"➕ Added new account: UID {newAccount.uid}");
+                        UpdateStatus($"Added new account: UID {newAccount.uid}");
                     }
 
                     // Save updated accounts
                     string json = JsonConvert.SerializeObject(accounts, Formatting.Indented);
                     File.WriteAllText(outputFile, json, Encoding.UTF8);
 
-                    UpdateStatus($"💾 Accounts saved to: {outputFile} (Total: {accounts.Count})");
+                    //UpdateStatus($"Accounts saved to: {outputFile} (Total: {accounts.Count})");
+                    UpdateStatus($"Accounts saved  (Total: {accounts.Count})");
+                    labelAccount.Text = $"Accounts: {accounts.Count}";
                     return true;
                 }
                 catch (Exception ex)
@@ -571,10 +611,7 @@ namespace GuestExtractor
             }
         }
 
-        private void btnClear_Click(object sender, EventArgs e)
-        {
-            statusTextBox.Clear();
-        }
+
 
         private void label3_Click(object sender, EventArgs e)
         {
@@ -585,13 +622,8 @@ namespace GuestExtractor
             });
         }
 
-        private void statusTextBox_TextChanged(object sender, EventArgs e)
-        {
-        }
 
-        private void label1_Click(object sender, EventArgs e)
-        {
-        }
+
 
         private void label5_Click(object sender, EventArgs e)
         {
@@ -620,26 +652,109 @@ namespace GuestExtractor
             public string password { get; set; }
         }
 
-        // Form closing event to cleanup
+       
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)
         {
             StopAdbMonitoring();
             CleanupTempFile();
         }
 
-        private void labelVersion_Click(object sender, EventArgs e)
+
+
+
+
+
+
+        private void panelMain_Paint(object sender, PaintEventArgs e)
         {
 
         }
 
-        private void guna2ControlBox1_Click(object sender, EventArgs e)
+        private void btnClear_Click_1(object sender, EventArgs e)
+        {
+            statusTextBox.Clear();
+        }
+
+        private void btnSelectOutputDir_Click_1(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            if (fbd.ShowDialog() == DialogResult.OK)
+            {
+                txtOutputDir.Text = fbd.SelectedPath;
+                txtOutputDir.ForeColor = System.Drawing.Color.Black;
+            }
+        }
+
+        private void label1_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void guna2ControlBox2_Click(object sender, EventArgs e)
+
+
+
+
+
+
+
+
+
+
+        private async Task DownloadAdbFiles()
+        {
+            txtAdbPath.Text = "";
+            try
+            {
+                if (!Directory.Exists(adbFolder))
+                    Directory.CreateDirectory(adbFolder);
+
+                string adbExe = Path.Combine(adbFolder, "adb.exe");
+                string adbDll1 = Path.Combine(adbFolder, "AdbWinApi.dll");
+                string adbDll2 = Path.Combine(adbFolder, "AdbWinUsbApi.dll");
+
+                using (var client = new WebClient())
+                {
+                    UpdateStatus("Téléchargement de ADB.exe...");
+                    await client.DownloadFileTaskAsync(
+                        "https://github.com/greatthug/adb/raw/refs/heads/main/adb.exe", adbExe);
+
+                    UpdateStatus("Téléchargement de AdbWinApi.dll...");
+                    await client.DownloadFileTaskAsync(
+                        "https://github.com/greatthug/adb/raw/refs/heads/main/AdbWinApi.dll", adbDll1);
+
+                    UpdateStatus("Téléchargement de AdbWinUsbApi.dll...");
+                    await client.DownloadFileTaskAsync(
+                        "https://github.com/greatthug/adb/raw/refs/heads/main/AdbWinUsbApi.dll", adbDll2);
+                }
+
+                adbPath = adbExe;
+                txtAdbPath.Text = adbPath;
+                UpdateStatus($"ADB installé dans : {adbFolder}");
+
+                await TestAdbConnection();
+            }
+            catch (Exception ex)
+            {
+                UpdateStatus($"Erreur téléchargement ADB : {ex.Message}");
+            }
+        }
+
+        private void label2_Click(object sender, EventArgs e)
         {
 
         }
+
+        private void about_Click(object sender, EventArgs e)
+
+        {
+            About about = new About();
+            about.ShowDialog();
+        }
+
+        private async void button1_Click(object sender, EventArgs e)
+        {
+            await DownloadAdbFiles();
+        }
+
     }
 }
