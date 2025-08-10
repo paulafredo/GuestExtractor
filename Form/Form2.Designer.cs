@@ -12,17 +12,16 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.guna2AnimateWindow1 = new Guna.UI2.WinForms.Guna2AnimateWindow(this.components);
-            this.guna2AnimateWindow2 = new Guna.UI2.WinForms.Guna2AnimateWindow(this.components);
             this.btnResetGuest = new System.Windows.Forms.Button();
             this.panelMain = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
+            this.cmbEmulatorSelection = new System.Windows.Forms.ComboBox();
+            this.btnCheck = new System.Windows.Forms.Button();
+            this.txtOutputDir = new Guna.UI2.WinForms.Guna2TextBox();
+            this.txtAdbPath = new Guna.UI2.WinForms.Guna2TextBox();
+            this.textPort = new Guna.UI2.WinForms.Guna2TextBox();
+            this.labelAccount = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.btnStartMonitoring = new System.Windows.Forms.Button();
-            this.txtOutputDir = new System.Windows.Forms.TextBox();
-            this.txtAdbPath = new System.Windows.Forms.TextBox();
             this.btnSelectOutputDir = new System.Windows.Forms.Button();
             this.btnSelectAdb = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -44,16 +43,17 @@
             this.cuiControlDrag11 = new CuoreUI.cuiControlDrag(this.components);
             this.cuiControlDrag12 = new CuoreUI.cuiControlDrag(this.components);
             this.about = new System.Windows.Forms.Button();
-            this.labelAccount = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.guna2BorderlessForm1 = new Guna.UI2.WinForms.Guna2BorderlessForm(this.components);
             this.panelMain.SuspendLayout();
             this.guna2ContainerControl1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnResetGuest
             // 
-            this.btnResetGuest.Location = new System.Drawing.Point(12, 170);
+            this.btnResetGuest.Location = new System.Drawing.Point(12, 197);
             this.btnResetGuest.Name = "btnResetGuest";
-            this.btnResetGuest.Size = new System.Drawing.Size(95, 23);
+            this.btnResetGuest.Size = new System.Drawing.Size(100, 30);
             this.btnResetGuest.TabIndex = 61;
             this.btnResetGuest.Text = "GUEST RESET";
             this.btnResetGuest.Click += new System.EventHandler(this.btnResetGuest_Click_1);
@@ -61,14 +61,14 @@
             // panelMain
             // 
             this.panelMain.BackColor = System.Drawing.Color.White;
-            this.panelMain.Controls.Add(this.labelAccount);
-            this.panelMain.Controls.Add(this.button1);
-            this.panelMain.Controls.Add(this.label2);
-            this.panelMain.Controls.Add(this.label3);
-            this.panelMain.Controls.Add(this.label4);
-            this.panelMain.Controls.Add(this.btnStartMonitoring);
+            this.panelMain.Controls.Add(this.cmbEmulatorSelection);
+            this.panelMain.Controls.Add(this.btnCheck);
             this.panelMain.Controls.Add(this.txtOutputDir);
             this.panelMain.Controls.Add(this.txtAdbPath);
+            this.panelMain.Controls.Add(this.textPort);
+            this.panelMain.Controls.Add(this.labelAccount);
+            this.panelMain.Controls.Add(this.label2);
+            this.panelMain.Controls.Add(this.btnStartMonitoring);
             this.panelMain.Controls.Add(this.btnSelectOutputDir);
             this.panelMain.Controls.Add(this.btnSelectAdb);
             this.panelMain.Controls.Add(this.label1);
@@ -80,85 +80,128 @@
             this.panelMain.TabIndex = 58;
             this.panelMain.Paint += new System.Windows.Forms.PaintEventHandler(this.panelMain_Paint);
             // 
-            // button1
+            // cmbEmulatorSelection
             // 
-            this.button1.Location = new System.Drawing.Point(285, 170);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(107, 23);
-            this.button1.TabIndex = 72;
-            this.button1.Text = "DONWLOD ADB";
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.cmbEmulatorSelection.FormattingEnabled = true;
+            this.cmbEmulatorSelection.Location = new System.Drawing.Point(12, 83);
+            this.cmbEmulatorSelection.Name = "cmbEmulatorSelection";
+            this.cmbEmulatorSelection.Size = new System.Drawing.Size(300, 21);
+            this.cmbEmulatorSelection.TabIndex = 79;
+            this.cmbEmulatorSelection.SelectedIndexChanged += new System.EventHandler(this.cmbEmulatorSelection_SelectedIndexChanged_1);
+            // 
+            // btnCheck
+            // 
+            this.btnCheck.BackColor = System.Drawing.Color.Transparent;
+            this.btnCheck.Location = new System.Drawing.Point(12, 161);
+            this.btnCheck.Name = "btnCheck";
+            this.btnCheck.Size = new System.Drawing.Size(100, 30);
+            this.btnCheck.TabIndex = 78;
+            this.btnCheck.Text = "CHECK ";
+            this.btnCheck.UseVisualStyleBackColor = false;
+            this.btnCheck.Click += new System.EventHandler(this.btnCheck_Click);
+            // 
+            // txtOutputDir
+            // 
+            this.txtOutputDir.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
+            this.txtOutputDir.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.txtOutputDir.DefaultText = "";
+            this.txtOutputDir.DisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(208)))), ((int)(((byte)(208)))));
+            this.txtOutputDir.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(226)))), ((int)(((byte)(226)))));
+            this.txtOutputDir.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
+            this.txtOutputDir.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
+            this.txtOutputDir.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.txtOutputDir.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.txtOutputDir.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.txtOutputDir.Location = new System.Drawing.Point(12, 116);
+            this.txtOutputDir.Name = "txtOutputDir";
+            this.txtOutputDir.PlaceholderText = "FOLDER OUTPUT";
+            this.txtOutputDir.SelectedText = "";
+            this.txtOutputDir.Size = new System.Drawing.Size(300, 30);
+            this.txtOutputDir.TabIndex = 77;
+            // 
+            // txtAdbPath
+            // 
+            this.txtAdbPath.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.txtAdbPath.DefaultText = "";
+            this.txtAdbPath.DisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(208)))), ((int)(((byte)(208)))));
+            this.txtAdbPath.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(226)))), ((int)(((byte)(226)))));
+            this.txtAdbPath.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
+            this.txtAdbPath.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
+            this.txtAdbPath.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.txtAdbPath.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.txtAdbPath.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.txtAdbPath.Location = new System.Drawing.Point(12, 46);
+            this.txtAdbPath.Name = "txtAdbPath";
+            this.txtAdbPath.PlaceholderText = "ADB PATCH";
+            this.txtAdbPath.SelectedText = "";
+            this.txtAdbPath.Size = new System.Drawing.Size(300, 30);
+            this.txtAdbPath.TabIndex = 76;
+            // 
+            // textPort
+            // 
+            this.textPort.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.textPort.DefaultText = "";
+            this.textPort.DisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(208)))), ((int)(((byte)(208)))));
+            this.textPort.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(226)))), ((int)(((byte)(226)))));
+            this.textPort.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
+            this.textPort.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
+            this.textPort.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.textPort.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.textPort.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.textPort.Location = new System.Drawing.Point(152, 197);
+            this.textPort.Name = "textPort";
+            this.textPort.PlaceholderText = "PORT";
+            this.textPort.SelectedText = "";
+            this.textPort.Size = new System.Drawing.Size(100, 30);
+            this.textPort.TabIndex = 75;
+            this.textPort.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // labelAccount
+            // 
+            this.labelAccount.AutoSize = true;
+            this.labelAccount.ForeColor = System.Drawing.Color.Black;
+            this.labelAccount.Location = new System.Drawing.Point(281, 239);
+            this.labelAccount.Name = "labelAccount";
+            this.labelAccount.Size = new System.Drawing.Size(106, 13);
+            this.labelAccount.TabIndex = 73;
+            this.labelAccount.Text = "ACCOUNTS : NONE";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.ForeColor = System.Drawing.Color.Black;
-            this.label2.Location = new System.Drawing.Point(9, 216);
+            this.label2.Location = new System.Drawing.Point(9, 239);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(67, 13);
+            this.label2.Size = new System.Drawing.Size(90, 13);
             this.label2.TabIndex = 71;
-            this.label2.Text = "Console logs";
+            this.label2.Text = "CONSOLE LOGS";
             this.label2.Click += new System.EventHandler(this.label2_Click);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.ForeColor = System.Drawing.Color.Black;
-            this.label3.Location = new System.Drawing.Point(9, 112);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(98, 13);
-            this.label3.TabIndex = 70;
-            this.label3.Text = "FOLDER OUTPUT";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.ForeColor = System.Drawing.Color.Black;
-            this.label4.Location = new System.Drawing.Point(9, 53);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(61, 13);
-            this.label4.TabIndex = 69;
-            this.label4.Text = "ADB PATH";
             // 
             // btnStartMonitoring
             // 
             this.btnStartMonitoring.BackColor = System.Drawing.Color.Transparent;
-            this.btnStartMonitoring.Location = new System.Drawing.Point(155, 170);
+            this.btnStartMonitoring.Location = new System.Drawing.Point(287, 197);
             this.btnStartMonitoring.Name = "btnStartMonitoring";
-            this.btnStartMonitoring.Size = new System.Drawing.Size(95, 23);
+            this.btnStartMonitoring.Size = new System.Drawing.Size(100, 30);
             this.btnStartMonitoring.TabIndex = 67;
             this.btnStartMonitoring.Text = "START ADB";
             this.btnStartMonitoring.UseVisualStyleBackColor = false;
             this.btnStartMonitoring.Click += new System.EventHandler(this.btnStartMonitoring_Click_1);
             // 
-            // txtOutputDir
-            // 
-            this.txtOutputDir.Location = new System.Drawing.Point(12, 129);
-            this.txtOutputDir.Name = "txtOutputDir";
-            this.txtOutputDir.Size = new System.Drawing.Size(300, 20);
-            this.txtOutputDir.TabIndex = 66;
-            // 
-            // txtAdbPath
-            // 
-            this.txtAdbPath.Location = new System.Drawing.Point(12, 69);
-            this.txtAdbPath.Name = "txtAdbPath";
-            this.txtAdbPath.Size = new System.Drawing.Size(300, 20);
-            this.txtAdbPath.TabIndex = 65;
-            // 
             // btnSelectOutputDir
             // 
-            this.btnSelectOutputDir.Location = new System.Drawing.Point(319, 128);
+            this.btnSelectOutputDir.Location = new System.Drawing.Point(319, 116);
             this.btnSelectOutputDir.Name = "btnSelectOutputDir";
-            this.btnSelectOutputDir.Size = new System.Drawing.Size(68, 20);
+            this.btnSelectOutputDir.Size = new System.Drawing.Size(68, 30);
             this.btnSelectOutputDir.TabIndex = 64;
             this.btnSelectOutputDir.Text = "...";
             this.btnSelectOutputDir.Click += new System.EventHandler(this.btnSelectOutputDir_Click_1);
             // 
             // btnSelectAdb
             // 
-            this.btnSelectAdb.Location = new System.Drawing.Point(318, 69);
+            this.btnSelectAdb.Location = new System.Drawing.Point(319, 46);
             this.btnSelectAdb.Name = "btnSelectAdb";
-            this.btnSelectAdb.Size = new System.Drawing.Size(68, 20);
+            this.btnSelectAdb.Size = new System.Drawing.Size(68, 30);
             this.btnSelectAdb.TabIndex = 63;
             this.btnSelectAdb.Text = "...";
             this.btnSelectAdb.Click += new System.EventHandler(this.btnSelectAdb_Click_1);
@@ -176,13 +219,14 @@
             // 
             // statusTextBox
             // 
-            this.statusTextBox.Location = new System.Drawing.Point(12, 232);
+            this.statusTextBox.Location = new System.Drawing.Point(12, 255);
             this.statusTextBox.Multiline = true;
             this.statusTextBox.Name = "statusTextBox";
             this.statusTextBox.ReadOnly = true;
-            this.statusTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.statusTextBox.Size = new System.Drawing.Size(380, 176);
+            this.statusTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
+            this.statusTextBox.Size = new System.Drawing.Size(380, 153);
             this.statusTextBox.TabIndex = 60;
+            this.statusTextBox.TextChanged += new System.EventHandler(this.statusTextBox_TextChanged);
             // 
             // cuiControlDrag1
             // 
@@ -282,15 +326,25 @@
             this.about.Text = "ABOUT";
             this.about.Click += new System.EventHandler(this.about_Click);
             // 
-            // labelAccount
+            // label5
             // 
-            this.labelAccount.AutoSize = true;
-            this.labelAccount.ForeColor = System.Drawing.Color.Black;
-            this.labelAccount.Location = new System.Drawing.Point(305, 216);
-            this.labelAccount.Name = "labelAccount";
-            this.labelAccount.Size = new System.Drawing.Size(87, 13);
-            this.labelAccount.TabIndex = 73;
-            this.labelAccount.Text = "Accounts : None";
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Tai Le", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(194, 477);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(40, 16);
+            this.label5.TabIndex = 70;
+            this.label5.Text = "v2.0.1";
+            this.label5.Click += new System.EventHandler(this.label5_Click);
+            // 
+            // guna2BorderlessForm1
+            // 
+            this.guna2BorderlessForm1.AnimationType = Guna.UI2.WinForms.Guna2BorderlessForm.AnimateWindowType.AW_VER_POSITIVE;
+            this.guna2BorderlessForm1.ContainerControl = this;
+            this.guna2BorderlessForm1.DockIndicatorTransparencyValue = 0.6D;
+            this.guna2BorderlessForm1.ResizeForm = false;
+            this.guna2BorderlessForm1.ShadowColor = System.Drawing.Color.Blue;
+            this.guna2BorderlessForm1.TransparentWhileDrag = true;
             // 
             // Form2
             // 
@@ -299,6 +353,7 @@
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(428, 500);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.about);
             this.Controls.Add(this.guna2ContainerControl1);
             this.Controls.Add(this.btnClear);
@@ -314,20 +369,15 @@
             this.panelMain.PerformLayout();
             this.guna2ContainerControl1.ResumeLayout(false);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
-        private Guna.UI2.WinForms.Guna2AnimateWindow guna2AnimateWindow1;
-        private Guna.UI2.WinForms.Guna2AnimateWindow guna2AnimateWindow2;
         private System.Windows.Forms.Button btnResetGuest;
         private System.Windows.Forms.Panel panelMain;
         private System.Windows.Forms.TextBox statusTextBox;
         private System.Windows.Forms.Button btnSelectOutputDir;
         private System.Windows.Forms.Button btnSelectAdb;
         private System.Windows.Forms.Button btnStartMonitoring;
-        private System.Windows.Forms.TextBox txtOutputDir;
-        private System.Windows.Forms.TextBox txtAdbPath;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label4;
         private CuoreUI.cuiControlDrag cuiControlDrag1;
         private CuoreUI.cuiControlDrag cuiControlDrag2;
         private CuoreUI.cuiControlDrag cuiControlDrag3;
@@ -347,7 +397,13 @@
         private Guna.UI2.WinForms.Guna2ContainerControl guna2ContainerControl1;
         private Guna.UI2.WinForms.Guna2ControlBox guna2ControlBox1;
         private Guna.UI2.WinForms.Guna2ControlBox guna2ControlBox2;
-        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label labelAccount;
+        private System.Windows.Forms.Label label5;
+        private Guna.UI2.WinForms.Guna2TextBox textPort;
+        private Guna.UI2.WinForms.Guna2TextBox txtOutputDir;
+        private Guna.UI2.WinForms.Guna2TextBox txtAdbPath;
+        private System.Windows.Forms.Button btnCheck;
+        private System.Windows.Forms.ComboBox cmbEmulatorSelection;
+        private Guna.UI2.WinForms.Guna2BorderlessForm guna2BorderlessForm1;
     }
 }
